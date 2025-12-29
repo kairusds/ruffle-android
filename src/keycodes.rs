@@ -370,6 +370,11 @@ pub fn key_tag_to_key_descriptor(tag: &str) -> Option<KeyDescriptor> {
             logical_key: LogicalKey::Named(NamedKey::Control),
             key_location: KeyLocation::Left,
         }),
+        "BACKSPACE" => Some(KeyDescriptor {
+            physical_key: PhysicalKey::Backspace,
+            logical_key: LogicalKey::Named(NamedKey::Backspace),
+            key_location: KeyLocation::Standard,
+        }),
         _ => None,
     }
 }
