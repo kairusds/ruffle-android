@@ -338,6 +338,14 @@
                 android:tag="M"
                 android:text="M" />
         </LinearLayout>
+        
+        <Button
+            android:id="@+id/button_backspace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="⌫"
+            android:onClick="onKeyboardClick" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -400,6 +408,26 @@
                 android:tag="RIGHT"
                 android:text="→" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_copy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Copy" />
+
+            <Button
+                android:id="@+id/button_paste"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Paste" />
         </LinearLayout>
     </LinearLayout>
 

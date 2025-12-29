@@ -1,6 +1,8 @@
 package rs.ruffle
 
 import android.annotation.SuppressLint
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
@@ -8,6 +10,8 @@ import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
+import android.view.KeyCharacterMap
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -175,13 +179,37 @@ class PlayerActivity : GameActivity() {
             layout.getViewById(R.id.keyboard),
             Button::class.java
         )
+        val customButtons = listOf(
+            R.id.button_backspace,
+            R.id.button_copy,
+            R.id.button_paste
+        )
         for (b in keys) {
+            if (b.id in customButtons) continue
             b.setOnTouchListener { view: View, motionEvent: MotionEvent ->
                 val tag = view.tag as String
                 if (motionEvent.action == MotionEvent.ACTION_DOWN) keydown(tag)
                 if (motionEvent.action == MotionEvent.ACTION_UP) keyup(tag)
                 view.performClick()
                 false
+            }
+        }
+        layout.findViewById<Button>(R.id.button_backspace).setOnClickListener {
+            dispatchKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
+            dispatchKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL))
+        }
+        layout.findViewById<Button>(R.id.button_copy).setOnClickListener {
+            dispatchKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_CTRL_LEFT))
+            dispatchKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_C))
+            dispatchKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_C))
+            dispatchKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_CTRL_LEFT))
+        }
+        layout.findViewById<Button>(R.id.button_paste).setOnClickListener {
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = clipboard.primaryClip
+            if (clip != null && clip.itemCount > 0) {
+                val textToPaste = clip.getItemAt(0).text.toString()
+                typeText(textToPaste)
             }
         }
         layout.findViewById<View>(R.id.button_kb).setOnClickListener {
@@ -198,6 +226,27 @@ class PlayerActivity : GameActivity() {
         layout.requestFocus()
         mSurfaceView.holder.addCallback(this)
         ViewCompat.setOnApplyWindowInsetsListener(mSurfaceView, this)
+    }
+
+    private fun typeText(text: String) {
+        val keyCharacterMap = android.view.KeyCharacterMap.load(android.view.KeyCharacterMap.VIRTUAL_KEYBOARD)
+        val events = keyCharacterMap.getEvents(text.toCharArray())
+    
+        if (events != null) {
+            for (event in events) {
+                dispatchKeyEvent(event)
+            }
+        } else {
+            for (char in text) {
+                 val charMap = android.view.KeyCharacterMap.load(android.view.KeyCharacterMap.VIRTUAL_KEYBOARD)
+                 val charEvents = charMap.getEvents(charArrayOf(char))
+                 if (charEvents != null) {
+                     for (event in charEvents) {
+                         dispatchKeyEvent(event)
+                     }
+                 }
+            }
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
