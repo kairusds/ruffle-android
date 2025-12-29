@@ -194,17 +194,11 @@ class PlayerActivity : GameActivity() {
                 false
             }
         }
-        layout.findViewById<Button>(R.id.button_backspace).setOnClickListener {
-            layout.findViewById<Button>(R.id.button_backspace)?.setOnTouchListener { view, event ->
-                if (event.action == MotionEvent.ACTION_DOWN) {
-                    keydown("BACKSPACE") 
-                }
-                if (event.action == MotionEvent.ACTION_UP) {
-                    keyup("BACKSPACE")
-                }
-                view.performClick()
-                false
-            }
+        layout.findViewById<Button>(R.id.button_backspace).setOnTouchListener { view: View, event: MotionEvent ->
+            if (event.action == MotionEvent.ACTION_DOWN) keydown("BACKSPACE")
+            if (event.action == MotionEvent.ACTION_UP) keyup("BACKSPACE")
+            view.performClick()
+            false
         }
         layout.findViewById<Button>(R.id.button_copy).setOnClickListener {
             dispatchKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_CTRL_LEFT))
